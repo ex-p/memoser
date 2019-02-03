@@ -14,25 +14,16 @@ def index(request):
     return HttpResponse('')
 
 
-def request_token(request):
-    if request.method == 'POST':
-        data = {
-            'error': None
-        }
-        logger.info(request.body)
-        return HttpResponse(request.body)
-        return HttpResponse(json.dumps(data), content_type='application/json')
-    return HttpResponse('404')
-
-
 class RequestTokenView(View):
     def post(self, request, *args, **kwargs):
         response = {'error': None}
         body = request.body
+        logger.info(body)
         if not body:
             response['error'] = 'No data provided'
         else:
             try:
+
                 response['verified'] = verify_openapi_auth(body)
             except Exception as e:
                 response['error'] = str(e)
