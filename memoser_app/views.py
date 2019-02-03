@@ -1,13 +1,17 @@
 import json
+import logging
 
 from django.http import HttpResponse
 from django.views import View
 
 from memoser_app.logic import verify_openapi_auth
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 
 def index(request):
-    return HttpResponse('Hello')
+    return HttpResponse('')
 
 
 def request_token(request):
@@ -15,7 +19,8 @@ def request_token(request):
         data = {
             'error': None
         }
-
+        logger.log(request.body)
+        return HttpResponse(request.body)
         return HttpResponse(json.dumps(data), content_type='application/json')
     return HttpResponse('404')
 
