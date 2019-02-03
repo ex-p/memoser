@@ -38,16 +38,14 @@ class RequestTokenView(View):
                 image = data['user']['image']
                 User.objects.create_user(username=user, first_name=first_name, last_name=image)
                 user = User.objects.filter(username=name)
-            else:
-                user = user.first()
-
+            user = user.first()
             response['access_token'] = ExtendedTokenObtainPairSerializer.get_token(user)
         except Exception as e:
             response['error'] = str(e)
         return HttpResponse(json.dumps(response), content_type='application/json')
 
 
-class ExtendedTokenObtainPairSerializer(TokenObtainPairSerializer, ABC):
+class ExtendedTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super(ExtendedTokenObtainPairSerializer, cls).get_token(user)
