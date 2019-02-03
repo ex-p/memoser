@@ -19,7 +19,7 @@ def request_token(request):
         data = {
             'error': None
         }
-        logger.log(request.body)
+        logger.info(request.body)
         return HttpResponse(request.body)
         return HttpResponse(json.dumps(data), content_type='application/json')
     return HttpResponse('404')
