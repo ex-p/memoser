@@ -13,4 +13,4 @@ def verify_openapi_auth(data):
         sid=params.get('sid'),
         secure_key=settings.VK_SECURE_KEY,
     ).encode('utf-8'))
-    return params.get('sig') and hashed.hexdigest() == params['sig']
+    return params.get('sig') and hashed.hexdigest() == params['sig'], params.get('mid')
