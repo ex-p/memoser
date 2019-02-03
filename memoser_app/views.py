@@ -16,7 +16,7 @@ def index(request):
 
 class RequestTokenView(View):
     def post(self, request, *args, **kwargs):
-        body = request.body
+        body = request.body.decode('utf-8')
         response = {'error': None, 'request': body}
         if not body:
             response['error'] = 'No data provided'
