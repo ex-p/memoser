@@ -26,7 +26,6 @@ class RequestTokenView(View):
         try:
             if not body:
                 raise Exception('No data provided')
-
             data = json.loads(body)
             verified, mid = verify_openapi_auth(data['cookies'])
             if not verified:
@@ -36,10 +35,12 @@ class RequestTokenView(View):
             if not user.exists():
                 first_name = data['user']['name']
                 image = data['user']['image']
-                User.objects.create_user(username=user, first_name=first_name, last_name=image)
+                User.objects.create_user(username=name, first_name=first_name, last_name=image)
                 user = User.objects.filter(username=name)
             user = user.first()
-            response['access_token'] = ExtendedTokenObtainPairSerializer.get_token(user)
+            refresh = ExtendedTokenObtainPairSerializer.get_token(user)
+            response['refresh'] = str(refresh)
+            response['access_token'] = str(refresh.access_token)
         except Exception as e:
             response['error'] = str(e)
         return HttpResponse(json.dumps(response), content_type='application/json')
@@ -49,7 +50,7 @@ class ExtendedTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super(ExtendedTokenObtainPairSerializer, cls).get_token(user)
-        token['first_name'] = user.first_name
+        token['name'] = user.first_name
         token['image'] = user.last_name
         return token
 
