@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^$', memoser_app_views.index),
+    url(r'^request_token$', memoser_app_views.request_token),
 ]
