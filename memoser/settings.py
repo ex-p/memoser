@@ -26,7 +26,9 @@ SECRET_KEY = 'k&h0qy5=eh-s00^xz*@&*#f$c852rbjd!!=fv3xo8%a)kb6&ob'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
@@ -38,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'memoser_app.apps.MemoserAppConfig',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
