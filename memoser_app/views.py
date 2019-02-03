@@ -16,14 +16,12 @@ def index(request):
 
 class RequestTokenView(View):
     def post(self, request, *args, **kwargs):
-        response = {'error': None}
         body = request.body
-        logger.info(body)
+        response = {'error': None, 'request': body}
         if not body:
             response['error'] = 'No data provided'
         else:
             try:
-
                 response['verified'] = verify_openapi_auth(body)
             except Exception as e:
                 response['error'] = str(e)
