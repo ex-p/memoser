@@ -15,21 +15,23 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from rest_framework import routers
 from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView
 )
 
-from memoser_app import views as memoser_app_views
+from memoser_app import views as memoser_app_views, views
+
+router = routers.DefaultRouter()
+router.register(r'mems', views.MemViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^$', memoser_app_views.index),
     url(r'^request_token$', memoser_app_views.RequestTokenView.as_view()),
-    url(r'^api/token/$', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     url(r'^api/token/refresh/$', TokenRefreshView.as_view(), name='token_refresh'),
     url(r'^api/token/verify/$', TokenVerifyView.as_view(), name='token_verify'),
+    path('', include(router.urls)),
 ]

@@ -1,25 +1,23 @@
 import json
 import logging
-from abc import ABC
 
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.views import View
+from rest_framework import viewsets, permissions
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from memoser_app.logic import verify_openapi_auth
+from memoser_app.models import Mem, WhiteId
+from memoser_app.serializers import MemSerializer
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-def index(request):
-    return HttpResponse('')
-
-
 class RequestTokenView(View):
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         body = request.body.decode('utf-8')
         response = {'error': None, 'request': body}
 
@@ -30,12 +28,15 @@ class RequestTokenView(View):
             verified, mid = verify_openapi_auth(data['cookies'])
             if not verified:
                 raise Exception('Not verified')
+            if not WhiteId.objects.filter(mid=mid).exists():
+                raise Exception('No access')
             name = 'vk{}'.format(mid)
             user = User.objects.filter(username=name)
             if not user.exists():
-                first_name = data['user']['name']
-                image = data['user']['image']
-                User.objects.create_user(username=name, first_name=first_name, last_name=image)
+                name = data['user']['name'].split(' ')
+                first_name = name[0]
+                last_name = name[1]
+                User.objects.create_user(username=name, first_name=first_name, last_name=last_name)
                 user = User.objects.filter(username=name)
             user = user.first()
             refresh = ExtendedTokenObtainPairSerializer.get_token(user)
@@ -57,3 +58,11 @@ class ExtendedTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = ExtendedTokenObtainPairSerializer
+
+
+class MemViewSet(viewsets.ModelViewSet):
+    queryset = Mem.objects.all()
+    serializer_class = MemSerializer
+
+    def get_permissions(self):
+        return [permissions.IsAuthenticated(), permissions.DjangoModelPermissions()]
