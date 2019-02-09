@@ -30,13 +30,13 @@ class RequestTokenView(View):
                 raise Exception('Not verified')
             if not WhiteId.objects.filter(mid=mid).exists():
                 raise Exception('No access')
-            name = 'vk{}'.format(mid)
-            user = User.objects.filter(username=name)
+            username = 'vk{}'.format(mid)
+            user = User.objects.filter(username=username)
             if not user.exists():
                 name = data['user']['name'].split(' ')
                 first_name = name[0]
                 last_name = name[1]
-                User.objects.create_user(username=name, first_name=first_name, last_name=last_name)
+                User.objects.create_user(username=username, first_name=first_name, last_name=last_name)
                 user = User.objects.filter(username=name)
             user = user.first()
             refresh = ExtendedTokenObtainPairSerializer.get_token(user)
