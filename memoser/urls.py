@@ -29,7 +29,6 @@ router.register(r'mems', views.MemViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'^$', memoser_app_views.index),
     url(r'^request_token$', memoser_app_views.RequestTokenView.as_view()),
     url(r'^api/token/refresh/$', TokenRefreshView.as_view(), name='token_refresh'),
     url(r'^api/token/verify/$', TokenVerifyView.as_view(), name='token_verify'),
